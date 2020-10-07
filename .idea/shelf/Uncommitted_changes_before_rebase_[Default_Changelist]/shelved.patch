@@ -1,0 +1,12 @@
+Index: .gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>venv/
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .gitignore	(revision a39606196a826364c4c7db74517baf2e12759c44)
++++ .gitignore	(date 1602100184329)
+@@ -1,1 +1,0 @@
+-venv/
+\ No newline at end of file
