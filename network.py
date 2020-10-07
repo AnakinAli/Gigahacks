@@ -1,28 +1,58 @@
 import socket
 import pickle
+from _thread import *
+
+from player import Player
+
+server = 'https://gigahacks-app.herokuapp.com'
+port = 5555
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+try:
+    s.bind((server, port))
+except socket.error as e:
+    print(e)
+
+s.listen(2)
+print('waiting for connection, Server Started')
 
 
-class Network:
-    def __init__(self):
-        self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server = "https://gigahacks-app.herokuapp.com"
-        self.port = 5555
-        self.addr = (self.server, self.port)
-        self.p = self.connect()
+players = [Player(0, 0, 50, 50, (0, 255, 0)),
+           Player(100, 100, 50, 50, (255, 0, 0))]
 
-    def get_p(self):
-        return self.p
 
-    def connect(self,):
+def client(conn, player):  # threaded function
+    conn.send(pickle.dumps(players[player]))
+    reply = ''
+
+    while True:
         try:
-            self.client.connect(self.addr)
-            return pickle.loads(self.client.recv(2048))
+            data = pickle.loads(conn.recv(2048))
+            players[player] = data
+
+            if not data:
+                print('disconnected')
+                break
+            else:
+                if player == 1:
+                    reply = players[0]
+                else:
+                    reply = players[1]
+                print('Received:', data)
+                print('Sending:', reply)
+            conn.sendall(pickle.dumps(reply))
         except:
-            pass
+            break
 
-    def send(self, data):
-        try:
-            self.client.send(pickle.dumps(data))
-            return pickle.loads(self.client.recv(2048))
-        except socket.error as e:
-            print(e)
+    print('Connection lost')
+    conn.close()
+
+
+current_player = 0
+while True:
+    conn, addr = s.accept()
+    print('Connected to:', addr)
+
+    start_new_thread(client, (conn, current_player))
+    current_player += 1
