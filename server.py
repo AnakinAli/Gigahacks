@@ -4,7 +4,7 @@ from _thread import *
 
 from player import Player
 
-server = '192.168.1.146'
+server = '172.16.1.165'
 port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
